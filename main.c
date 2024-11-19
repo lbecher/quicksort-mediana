@@ -2,39 +2,49 @@
 #include <stdlib.h>
 #include <time.h>
 
-int mediana_de_tres(int *V, int inicio, int meio, int fim) {
-    if ((V[inicio] < V[meio] && V[meio] < V[fim]) || (V[fim] < V[meio] && V[meio] < V[inicio]))
-        return meio;
-    else if ((V[meio] < V[inicio] && V[inicio] < V[fim]) || (V[fim] < V[inicio] && V[inicio] < V[meio]))
-        return inicio;
+int mediana_de_tres(int *V, int inicio, int fim) {
+    int idx1 = inicio + rand() % (fim - inicio + 1);
+    int idx2 = inicio + rand() % (fim - inicio + 1);
+    int idx3 = inicio + rand() % (fim - inicio + 1);
+
+    int val1 = V[idx1];
+    int val2 = V[idx2];
+    int val3 = V[idx3];
+
+    // Encontrar a mediana dos três valores
+    if ((val1 <= val2 && val2 <= val3) || (val3 <= val2 && val2 <= val1))
+        return idx2;
+    else if ((val2 <= val1 && val1 <= val3) || (val3 <= val1 && val1 <= val2))
+        return idx1;
     else
-        return fim;
+        return idx3;
 }
 
 int particiona(int *V, int inicio, int final) {
     int esq, dir, pivo, aux;
     
-    int meio = (inicio + final) / 2;
-    int pivo_idx = mediana_de_tres(V, inicio, meio, final);
+    int pivo_idx = mediana_de_tres(V, inicio, final);
     
     aux = V[inicio];
     V[inicio] = V[pivo_idx];
     V[pivo_idx] = aux;
     pivo = V[inicio];
 
-    esq = inicio;
+    esq = inicio + 1;
     dir = final;
 
-    while (esq < dir) {
+    while (esq <= dir) {
         while (esq <= final && V[esq] <= pivo)
             esq++;
-        while (dir >= 0 && V[dir] > pivo)
+        while (dir > inicio && V[dir] > pivo)
             dir--;
 
         if (esq < dir) {
             aux = V[esq];
             V[esq] = V[dir];
             V[dir] = aux;
+            esq++;
+            dir--;
         }
     }
 
@@ -44,9 +54,8 @@ int particiona(int *V, int inicio, int final) {
 }
 
 void quicksort(int *V, int inicio, int fim) {
-    int pivo;
-    if (fim > inicio) {
-        pivo = particiona(V, inicio, fim);
+    if (inicio < fim) {
+        int pivo = particiona(V, inicio, fim);
         quicksort(V, inicio, pivo - 1);
         quicksort(V, pivo + 1, fim);
     }
@@ -85,14 +94,17 @@ int main(int argc, char *argv[]) {
     }
     fclose(fp);
 
-    clock_t inicio, fim;
+    // Inicializa o gerador de números aleatórios
+    srand(time(NULL));
+
+    clock_t inicio_tempo, fim_tempo;
     double tempo_execucao;
 
-    inicio = clock();
+    inicio_tempo = clock();
     quicksort(V, 0, count - 1);
-    fim = clock();
+    fim_tempo = clock();
 
-    tempo_execucao = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+    tempo_execucao = ((double)(fim_tempo - inicio_tempo)) / CLOCKS_PER_SEC;
     printf("%d,%.6f\n", count, tempo_execucao);
 
     free(V);
