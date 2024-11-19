@@ -6,7 +6,7 @@ No Linux, execute:
 ./run.sh
 ```
 
-Caso não rode por problemas de permissão, execute:
+Caso não rode por problemas de permissão, execute o comando abaixo. Depois, execute novamente o comando acima.
 
 ```
 chmod +x run.sh
